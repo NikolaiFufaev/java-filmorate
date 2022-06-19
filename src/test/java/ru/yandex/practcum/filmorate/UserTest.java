@@ -51,14 +51,14 @@ public class UserTest {
     void loginCannotBeEmpty() {
         user.setLogin("");
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals("Логин не может быть пустым", violations.iterator().next().getMessage());
+        assertEquals("Логин не должен содержать пробелы и быть пустым", violations.iterator().next().getMessage());
     }
 
     @Test
     void loginMustNotContainSpaces() {
         user.setLogin("имя имя");
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals("Логин не должен содержать пробелы", violations.iterator().next().getMessage());
+        assertEquals("Логин не должен содержать пробелы и быть пустым", violations.iterator().next().getMessage());
     }
 
     @Test

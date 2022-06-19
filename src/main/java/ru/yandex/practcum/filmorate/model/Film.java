@@ -2,6 +2,7 @@ package ru.yandex.practcum.filmorate.model;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import ru.yandex.practcum.filmorate.util.AfterDate;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
@@ -11,7 +12,6 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Film {
     @EqualsAndHashCode.Include

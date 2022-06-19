@@ -1,8 +1,10 @@
-package ru.yandex.practcum.filmorate.model;
+package ru.yandex.practcum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practcum.filmorate.model.Film;
+import ru.yandex.practcum.filmorate.exceptions.ValidationException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping
+@RequestMapping("/films")
 @Slf4j
 @Validated
 public class FilmController {
@@ -22,12 +24,12 @@ public class FilmController {
     private static Integer id = 1;
 
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> getAll() {
         return new ArrayList<>(filmMap.values());
     }
 
-    @PostMapping("/films")
+    @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         log.info("получен запрос на сохранение фильма");
         if (film.getId() == null) {
@@ -37,7 +39,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping("/films")
+    @PutMapping
     public Film update(@Valid @RequestBody Film film) {
         if (!filmMap.containsKey(film.getId())) {
             throw new ValidationException("Фильма с таким id нет в базе");

@@ -35,28 +35,28 @@ public class FilmTest {
     }
 
     @Test
-    public void filmNameIsNull() {
+    void filmNameIsNull() {
         film.setName("");
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals("Название не может быть пустым", violations.iterator().next().getMessage());
     }
 
     @Test
-    public void filmDescriptionLengthMoreThan200Characters() {
+    void filmDescriptionLengthMoreThan200Characters() {
         film.setDescription("a".repeat(201));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals("Длинна описания должна быть меньше 200 символов", violations.iterator().next().getMessage());
     }
 
     @Test
-    public void theReleaseDateCannotBeEarlier28_12_1895() {
+    void theReleaseDateCannotBeEarlier28_12_1895() {
         film.setReleaseDate(LocalDate.of(1785, 12, 12));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals("Фильм не может быть снят раньше 28-12-1895", violations.iterator().next().getMessage());
     }
 
     @Test
-    public void durationIsPositive() {
+    void durationIsPositive() {
         film.setDuration(-1);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals("Продолжительность не может быть отрицательной", violations.iterator().next().getMessage());

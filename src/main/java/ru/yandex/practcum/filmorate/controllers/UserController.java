@@ -1,7 +1,9 @@
-package ru.yandex.practcum.filmorate.model;
+package ru.yandex.practcum.filmorate.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practcum.filmorate.model.User;
+import ru.yandex.practcum.filmorate.exceptions.ValidationException;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
