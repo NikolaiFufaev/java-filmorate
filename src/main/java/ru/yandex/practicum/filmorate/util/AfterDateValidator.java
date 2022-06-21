@@ -1,7 +1,6 @@
-package ru.yandex.practcum.filmorate.util;
+package ru.yandex.practicum.filmorate.util;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.yandex.practcum.filmorate.util.AfterDate;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
