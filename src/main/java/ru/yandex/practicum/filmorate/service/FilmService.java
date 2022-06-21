@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -51,7 +51,6 @@ public class FilmService {
         List<Film> topFilms = filmStorage.getFilms().stream()
                 .sorted(Comparator.comparingInt(f -> f.getRatedUsers().size()))
                 .collect(Collectors.toList());
-        //Вопрос к ревьюеру: Есть ли возможность отразить коллекцию прямо в стриме?
         Collections.reverse(topFilms);
         topFilms = topFilms.stream()
                 .limit(limit)

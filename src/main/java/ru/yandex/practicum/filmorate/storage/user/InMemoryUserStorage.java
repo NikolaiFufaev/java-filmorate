@@ -62,6 +62,14 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
+    public User delete(long id) {
+        if(!users.containsKey(id)){
+            throw new ValidationException("Введите id пользователя, которого необходимо удалить");
+        }
+        return users.remove(id);
+    }
+
     private void updateId(User user) {
         user.setId(id++);
     }

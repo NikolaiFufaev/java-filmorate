@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,14 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         films.put(film.getId(), film);
         return film;
+    }
+
+    @Override
+    public Film delete(long id) {
+        if(!films.containsKey(id)){
+            throw new ValidationException("Введите id фильма, который необходимо удалить");
+        }
+        return films.remove(id);
     }
 
     private void updateId(Film film) {
