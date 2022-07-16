@@ -10,23 +10,20 @@ import java.util.Set;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
-    @EqualsAndHashCode.Include
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class User extends IdEntity{
     @Email(message = "Эмейл написан не в формате электронного адресса")
-    @NotBlank(message = "Эмейл не может быть пустым")
-    @EqualsAndHashCode.Include
     private String email;
+
+    @NotBlank(message = "Логин не должен быть пустым")
     @Pattern(regexp = "^\\S+$", message = "Логин не должен содержать пробелы и быть пустым")
     private String login;
+
     private String name;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Past(message = "Дата рождения не может быть из будущего")
     private LocalDate birthday;
-    private Set<Integer> friends = new HashSet<>();
-    private Set<Integer> favoriteFilms = new HashSet<>();
+
 
 }

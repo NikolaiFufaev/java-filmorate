@@ -1,70 +1,96 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.dao.FriendStorageDao;
+import ru.yandex.practicum.filmorate.storage.user.dao.UserStorageDao;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserStorageDao userStorage;
+    private final FriendStorageDao friendStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public Collection<User> findAll() {
+        log.info("Получение списка всех пользователей");
+        return userStorage.findAll();
     }
 
-    public void addFriend(Integer userId, Integer friendId) {
-        if (userStorage.getUserById(userId) != null && userStorage.getUserById(friendId) != null) {
-            userStorage.getUserById(userId).getFriends().add(friendId);
-            userStorage.getUserById(friendId).getFriends().add(userId);
-        } else {
-            throw new ObjectNotFoundException(
-                    String.format("Пользователя с id \"%s\" или с id \"%s\" не существует."
-                            , userId, friendId));
+    public User add(User user) {
+        validate(user);
+        User addedUser = userStorage.add(user);
+        log.info("Добавление нового пользователя с id {}", addedUser.getId());
+
+        return addedUser;
+    }
+
+    public User update(User user) {
+        if (!userStorage.existsById(user.getId())) {
+            log.warn("Пользователь с id {} не найден", user.getId());
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
+        }
+        validate(user);
+        log.info("Обновление пользователя с id {}", user.getId());
+        return userStorage.update(user);
+    }
+
+    private void validate(User user) {
+        boolean isWrongName = user.getName().isBlank();
+
+        if (isWrongName) {
+            log.warn("У пользователя {} user изменено имя на {}", user, user.getLogin());
+            user.setName(user.getLogin());
         }
     }
 
-    public void removeFriend(Integer id1, Integer id2) {
-        if (userStorage.getUsers().get(id1) != null || userStorage.getUsers().get(id2) != null) {
-            userStorage.getUsers().get(id1).getFriends().remove(id2);
-            userStorage.getUsers().get(id2).getFriends().remove(id1);
-        } else {
-            throw new ObjectNotFoundException(
-                    String.format("Пользователя с id \"%s\" или с не id \"%s\" не существует."
-                            , id1, id2));
+    public User findUserById(Long userId) {
+        if (!userStorage.existsById(userId)) {
+            log.warn("Пользователь с id {} не найден", userId);
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
         }
-
+        log.info("Получение пользователя с id {}", userId);
+        return userStorage.findById(userId);
     }
 
-    public List<User> getFriendsList(Integer id) {
-        List<User> list = null;
-        if (userStorage.getUsers().get(id) != null) {
-            list = userStorage.getUserById(id).getFriends().stream()
-                    .map(userStorage::getUserById)
-                    .collect(Collectors.toList());
-        } else {
-            throw new ObjectNotFoundException(
-                    String.format("Пользователя с id \"%s\"не существует.", id));
+    public void addFriend(Long userId, Long friendId) {
+        if (!(userStorage.existsById(userId) && userStorage.existsById(friendId))) {
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
         }
-        return list;
+        log.info("Пользователь {} добавил {}", userId, friendId);
+        friendStorage.addFriend(userId, friendId);
     }
 
-    public List<User> getMutualFriends(Integer id1, Integer id2) {
-        List<User> userList = null;
-        Set<Integer> setMutualFriends = new HashSet<>(userStorage.getUserById(id1).getFriends());
-        setMutualFriends.retainAll(userStorage.getUserById(id2).getFriends());
-        userList = setMutualFriends.stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
-        return userList;
+    public void deleteFriend(Long userId, Long friendId) {
+        if (!(userStorage.existsById(userId) && userStorage.existsById(friendId))) {
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
+        }
+        log.info("Пользователь {} удалил {}", userId, friendId);
+        friendStorage.deleteFriend(userId, friendId);
     }
+
+    public List<User> findFriends(Long userId) {
+        if (!userStorage.existsById(userId)) {
+            log.warn("Пользователь с id {} не найден", userId);
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
+        }
+        log.info("Получение друзей пользователя с id {}", userId);
+        return friendStorage.findFriends(userId);
+    }
+
+    public List<User> findMutualFriends(Long userId, Long otherId) {
+        if (!(userStorage.existsById(userId) && userStorage.existsById(otherId))) {
+            throw new ObjectNotFoundException("Вызов несуществующего объекта");
+        }
+        log.info("Получение общих друзей пользователей с id {} и {}", userId, otherId);
+        return friendStorage.findMutualFriends(userId, otherId);
+    }
+
+
 }
